@@ -134,7 +134,13 @@ async function main() {
   const allEngagements = []; // { type, id, attachmentIds: [...] }
   for (const type of ENGAGEMENT_TYPES) {
     console.log(`Fetching ${type} with attachments...`);
-    const results = await getEngagementsWithAttachments(type);
+    let results = [];
+    try {
+      results = await getEngagementsWithAttachments(type);
+    } catch (e) {
+      console.warn(`  SKIPPING ${type} due to error: ${e.message}`);
+      continue;
+    }
     console.log(`  found ${results.length} ${type} with attachments.`);
     for (const r of results) {
       const ids = (r.properties.hs_attachment_ids || '')
