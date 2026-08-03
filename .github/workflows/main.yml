@@ -1,47 +1,28 @@
-# HubSpot Attachment Inventory
+name: HubSpot Attachment Inventory
 
-Finds every PDF/DOC/DOCX file attached to any Note, Email, Call, Meeting, or Task in
-this HubSpot portal, and traces each one back to whatever Deal/Company/Contact/Ticket
-it's associated with. Runs as a GitHub Action -- no local setup required.
+on:
+  workflow_dispatch: {}
 
-## One-time setup
+jobs:
+  inventory:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
 
-1. **Create the repo.** On GitHub, click **New repository**. Name it whatever you like
-   (e.g. `hubspot-attachment-inventory`), set it to **Private**, and create it.
-2. **Add these files to the repo:**
-   - `hubspot-inventory-all-attachments.js` (repo root)
-   - `.github/workflows/inventory.yml` (keep this exact folder path -- GitHub only
-     picks up workflows from `.github/workflows/`)
-   - This `README.md`
-   Easiest way: on the repo's GitHub page, click **Add file → Upload files**, drag
-   these in (GitHub will recreate the `.github/workflows/` folder structure
-   automatically as long as you drag the whole folder), then commit.
-3. **Add your HubSpot token as a secret** (this keeps it out of the code entirely):
-   - Repo page → **Settings → Secrets and variables → Actions**
-   - Click **New repository secret**
-   - Name: `HUBSPOT_TOKEN`
-   - Value: your HubSpot Private App access token (`pat-na1-...`)
-   - Save
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
 
-   See the main conversation for how to create the Private App and which scopes to
-   grant (`files`, `files.ui_hidden.read`, plus read access to deals/companies/
-   contacts/tickets and the engagement types).
+      - name: Run inventory script
+        env:
+          HUBSPOT_TOKEN: ${{ secrets.HUBSPOT_TOKEN }}
+        run: node hubspot-inventory-all-attachments.js
 
-## Running it
-
-1. Go to the **Actions** tab on the repo
-2. Click **HubSpot Attachment Inventory** in the left sidebar
-3. Click **Run workflow** (top right) → **Run workflow**
-4. Wait for the run to finish (watch the log for progress -- it pages through each
-   engagement type, then resolves associations, then fetches file metadata)
-5. Once it's green, click into the completed run, scroll to **Artifacts**, and
-   download `hubspot-all-attachments-csv` -- that's your CSV, zipped
-
-## Running it again later
-
-Every run overwrites nothing -- it's a fresh pull each time, saved as a new artifact
-under that run. Old artifacts auto-expire after 30 days (adjust `retention-days` in
-the workflow file if you want them kept longer).
-
-If you'd rather it run automatically instead of by hand, uncomment the `schedule`
-block near the top of `inventory.yml` and adjust the cron expression.
+      - name: Upload CSV as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hubspot-all-attachments-csv
+          path: hubspot-all-attachments.csv
+          retention-days: 30
