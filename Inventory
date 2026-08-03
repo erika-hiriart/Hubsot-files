@@ -1,0 +1,32 @@
+name: HubSpot Attachment Inventory
+
+# "workflow_dispatch" adds a manual "Run workflow" button in the Actions tab.
+# You can also uncomment the schedule below to run it automatically, e.g. weekly.
+on:
+  workflow_dispatch: {}
+  # schedule:
+  #   - cron: '0 13 * * 1' # every Monday at 13:00 UTC
+
+jobs:
+  inventory:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run inventory script
+        env:
+          HUBSPOT_TOKEN: ${{ secrets.HUBSPOT_TOKEN }}
+        run: node hubspot-inventory-all-attachments.js
+
+      - name: Upload CSV as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hubspot-all-attachments-csv
+          path: hubspot-all-attachments.csv
+          retention-days: 30
