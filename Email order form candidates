@@ -1,0 +1,238 @@
+Emails matching keywords (order form / signed / agreement / NDA / MSA) that have attachments,
+pulled directly from HubSpot via a working connection (bypassing the Private App scope block on Emails).
+
+Columns: emailId, subject, attachmentFileIds (semicolon-separated), createdDate
+
+NOTE: This covers ~500 of the 557 total keyword matches (everything from today back to
+late November 2025). The remaining ~57 go back further into November 2025 and earlier and
+were not pulled in this pass -- ask if you want those too.
+
+NOTE: This is NOT filtered to only PDF/DOC/DOCX yet -- that step still requires looking up
+each attachment file ID via the Files API (name/extension), which needs your working
+files.read + files.ui_hidden.read scopes. Feed the attachmentFileIds column into your
+existing hubspot-inventory-all-attachments.js file-metadata-resolution logic (the part that
+calls GET /files/v3/files/{fileId} and filters by extension) rather than its
+email-search step, since that's the part blocked by scopes.
+
+Also worth knowing: many entries below are calendar accept/decline notifications that happen
+to mention "order form," "MSA," etc. in a meeting title -- their "attachment" is usually just
+a calendar .ics file, not a real document. The Files API lookup will naturally filter these
+out since .ics is not pdf/doc/docx.
+
+---
+
+385234405053	Re: [External] BBVA Order Form	372231794375	2026-07-22
+385287189214	Re: [External] BBVA Order Form	372165753574	2026-07-22
+384991568609	Re: [External] BBVA Order Form	371799634628	2026-07-21
+384972177088	RE: [External] BBVA Order Form	371799871218	2026-07-21
+380544158406	Re: [External] BBVA Order Form	364554907331	2026-07-02
+380613133024	BBVA Order Form	364534291135	2026-07-02
+365258946260	RE: [External] Re: BSPT0130183 - Excelsa Lab - BBVA - Spain	336239708918;336239709888	2026-04-20
+359566487272	BSPT0128082 - Excelsa labs Inc - Order Form Radisson - Spain	325729654511	2026-03-18
+359824966382	RE: [External] Re: BSPT0128082 - Excelsa labs Inc - Order Form Radisson - Spain	326365332158;326365151933	2026-03-20
+321366925025	RE: [External] Re: BSPT0121942 - Excelsa Labs Inc - Order Form - Spain	306904823521	2026-01-30
+319635781306	RE: [External] Re: BSPT0121942 - Excelsa Labs Inc - Order Form - Spain	306139100911	2026-01-29
+319567601353	Re: BSPT0121942 - Excelsa Labs Inc - Order Form - Spain	305694867132	2026-01-28
+388516303570	Re: Walmart - ScrunchAI Master Services Agreement (MSA) & Next Steps	377888430822	2026-08-05
+384604390107	FW: Excelsa Labs, Inc. - MSA - TEMPLATE tq 7.16.26	371283899079	2026-07-20
+387658541794	Re: Excelsa Labs, Inc. | Walmart MSA Template Review - Annual Deal Expansion	376082207447	2026-07-31
+383133314796	Scrunch Order Form	368977859264;368998313659	2026-07-14
+383463035631	Akamai/Scrunch AI Brand Presence Order Form	369432094417	2026-07-15
+388176979693	Fw: Akamai/Scrunch AI Brand Presence Order Form	377244846831	2026-08-03
+387402674916	Fw: Akamai/Scrunch AI Brand Presence Order Form	375898381043	2026-07-30
+387786921698	Re: Akamai/Scrunch AI Brand Presence Order Form	376214812365	2026-07-31
+380057661139	Scrunch Pilot Order Form	363672659676	2026-06-30
+382043282743	Draft Order Forms and Options	367181414096;367180836559	2026-07-09
+382136310513	Fwd: Draft Order Forms and Options	367314047719;367314047718	2026-07-10
+387541551813	Fwd: Draft Order Forms and Options	375915855608;375927118549	2026-07-30
+383700212426	(hotel receipt, not relevant)	369803220705	2026-07-16
+374423595717	Scrunch / Commerce Renewal and Order Form	354198570704	2026-06-07
+374530501313	Scrunch Order Form - time sensitive	354198748921	2026-06-07
+374820739774	Re: [EXTERNAL] Order form	354862081771	2026-06-09
+366783481550	Scrunch Sample Order Form	338875160280	2026-04-28
+368634415811	Re: Order form + next steps	342692181744	2026-05-08
+366585988810	Signed Order Form From Princess	338540005067	2026-04-27
+370193683134	Breitling/Scrunch: Draft Order Form	346398456512	2026-05-19
+372282000086	Re: Breitling/Scrunch: Draft Order Form	350079914721;350064097982	2026-05-28
+371896822497	RE: Breitling/Scrunch: Draft Order Form	349532137207;349622762206	2026-05-27
+371028668119	Re: Breitling/Scrunch: Draft Order Form	347567832823	2026-05-22
+370981388986	RE: Breitling/Scrunch: Draft Order Form	347619705570	2026-05-22
+383849261762	Re: Excelsa Labs, Inc. | MSA Red Lines Review for Prospect Strategic Customer	370035638005	2026-07-17
+386949441268	Re: Excelsa Labs, Inc. | MSA Review: Excelsa Labs Redlines - $90K Annual Agreement	374927688384	2026-07-28
+387388705500	Re: Excelsa Labs, Inc. | MSA Review: Excelsa Labs Redlines - $90K Annual Agreement	375842610930	2026-07-30
+386599342813	Re: Excelsa Labs, Inc. | Excelsa Labs MSA and Order Form Redline Review	374461995751	2026-07-27
+382943231709	Re: Excelsa Labs, Inc. | Excelsa Labs MSA and Order Form Redline Review	368527635146;368516053698	2026-07-13
+382891932388	Re: Excelsa Labs, Inc. | Excelsa Labs MSA and Order Form Redline Review	368436593377;368455476978	2026-07-13
+385899157195	Scrunch + Perficient Reseller Agreement - minor updates	373304697593	2026-07-24
+386745772732	Re: CG/Scrunch AI MSA - Completed	374694069983	2026-07-27
+386717721290	RE: CG/Scrunch AI MSA - Completed	374595589864	2026-07-27
+381441700581	CG/Scrunch AI MSA - Completed	366428884672	2026-07-07
+381424655094	RE: CG/Scrunch AI MSA - Awaiting Signature	366391644899	2026-07-07
+386769012423	Scrunch MNDA - Merj	374730695358	2026-07-27
+386705777395	FW: Scrunch MNDA - Merj	374729918155	2026-07-27
+384928481988	RE: Request for NDA Information	371799953099	2026-07-21
+383118125806	RE: NDA	368837266118	2026-07-14
+383110225640	Re: NDA	368834423488	2026-07-14
+383102201576	RE: NDA	368849916617	2026-07-14
+382913116916	RE: NDA	368595461819	2026-07-13
+382402387652	Scrunch MSA	367525867207	2026-07-10
+381465064143	Accepted: Scrunch - AXP Pilot Order Form	366336976586	2026-07-07
+380315033333	Accepted: Scrunch - AXP Pilot Order Form	364041544379	2026-07-01
+380613133024	(dup, see above)
+374571414204	Updated NDA	354503262965	2026-06-08
+374725011174	Re: Updated NDA	354641153753	2026-06-09
+374864582354	Re: Updated NDA	354991860420	2026-06-09
+372998328050	Publicis Health x Scrunch NDA	351654689496	2026-06-01
+372979367628	Re: Publicis Health x Scrunch NDA	351661330130	2026-06-01
+373058200269	Re: Publicis Health x Scrunch NDA	351735140059	2026-06-01
+374907286247	Re: Publicis Health x Scrunch NDA	355016866493	2026-06-09
+375289020123	Merkle / Scrunch - Honda Canada	355794981609;355788460791	2026-06-11
+374573114050	Merkle / Scrunch - Honda Canada	354495382203	2026-06-08
+374636440251	Merkle / Scrunch - Honda Canada	354474399466	2026-06-08
+374884024037	Merkle / Scrunch - Honda Canada	354939510520;354938999497	2026-06-09
+375399173836	RE: REVIEW: CG/Scrunch AI MSA	356059247293	2026-06-12
+375298544360	RE: REVIEW: CG/Scrunch AI MSA	355826254531	2026-06-12
+375331163889	Re: REVIEW: CG/Scrunch AI MSA	356024889067	2026-06-12
+375419518702	Re: REVIEW: CG/Scrunch AI MSA	356059985631	2026-06-12
+375429880545	RE: REVIEW: CG/Scrunch AI MSA	356035412729	2026-06-12
+379022522076	Re: Citi MSA Thread	361628202710	2026-06-26
+379002767081	Re: Citi MSA Thread	361548981979	2026-06-25
+378593078975	Re: Citi MSA Thread	360928304872	2026-06-24
+376093467352	Re: Commercial Agreement Contract	357524309723	2026-06-16
+376804004550	Re: Excelsa Labs, Inc. | Contract Redline Review - Capital Group Agreement	358152529621	2026-06-17
+376361172702	Re: Excelsa Labs, Inc. | Contract Redline Review - Capital Group Agreement	357626439378	2026-06-16
+376754979540	Re: CG/Scrunch MSA - Missing Inputs	358162525893;358162420436	2026-06-17
+376279434978	RE: CG/Scrunch MSA - Missing Inputs	357561659122	2026-06-16
+376838193870	RE: [CG_WARNING]Re: CG/Scrunch MSA - Missing Inputs	358164362984	2026-06-17
+375991558892	CG/Scrunch MSA - Missing Inputs	357252901624	2026-06-15
+378648483528	Re: [CG_WARNING]Re: CG/Scrunch MSA - Missing Inputs	360935867109	2026-06-24
+379040357085	Re: [CG_WARNING]Re: CG/Scrunch MSA - Missing Inputs	361875597030	2026-06-26
+379191796465	Scrunch - Master License Agreement Redlines	362049872579	2026-06-26
+379390453472	RE: Scrunch - Master License Agreement Redlines	362753178351	2026-06-29
+378916101818	Re: Excelsa Labs, Inc. | Texas Instruments Master Licensing Agreement Review	361446139641	2026-06-25
+378196946650	TI's MSA	360084033240	2026-06-22
+379199023811	Re: Scrunch | Sitecore - MSA Follow Up	362011913932	2026-06-26
+379192440549	Re: Scrunch | Sitecore - MSA Follow Up	361961960174	2026-06-26
+377468635892	Scrunch Pilot Agreement	358922603236	2026-06-19
+377604880083	Scrunch Agreement Mutual	358964493039	2026-06-19
+377577553624	Re: [EXTERNAL] Re: CW81216 Scrunch MSA and Order Form 2026 - FL review	358922632952	2026-06-19
+377576668869	RE: [EXTERNAL] Re: CW81216 Scrunch MSA and Order Form 2026 - FL review	358914042602	2026-06-19
+377315126999	RE: [EXTERNAL] Re: CW81216 Scrunch MSA and Order Form 2026 - FL review	358571437776	2026-06-18
+377287329508	Re: [EXTERNAL] Re: CW81216 Scrunch MSA and Order Form 2026 - FL review	358632732408	2026-06-18
+377145449181	Re: CW81216 Scrunch MSA and Order Form 2026 - FL review	358505898696;358516270807;358517632702	2026-06-18
+377096001265	Re: Excelsa Labs, Inc. | SaaS Agreement Review with New Customer/Vendor	358486702834;358489200318;358491927261	2026-06-18
+372496470729	Scrunch OEM Reseller Agreement	350608432874	2026-05-29
+371962668785	Scrunch Monitoring 12 Month Order Form	349788839668;349788839663	2026-05-27
+369474073327	R: Scrunch Order Forms for Execution - Accenture Account	344566136540	2026-05-14
+370379107025	Scrunch (Accenture) Order Form for Signature	346705520374;346705520373	2026-05-19
+371602421441	R: Scrunch (Accenture) Order Form for Signature	348797503170	2026-05-25
+369421897437	Draft Order Form	344498643655	2026-05-14
+370111206122	Re: Excelsa Labs, Inc. | Accenture Song - Italy MSA Review for PRADA Services	346306449106	2026-05-18
+367525449414	Re: Excelsa Labs, Inc. | Accenture Song - Italy MSA Review for PRADA Services	340077336297	2026-05-01
+367586599672	Re: Excelsa Labs, Inc. | Accenture Song - Italy MSA Review for PRADA Services	340097230534	2026-05-01
+367518279407	Re: Excelsa Labs, Inc. | MSA Review for New Direct Customer - AI Use, IP & Liability Cap	340077313781	2026-05-01
+366650651382	Re: Scrunch - Review of Citi feedback on MSA	338540972750	2026-04-27
+366236578545	Scrunch - Review of Citi feedback on MSA	337637497576	2026-04-24
+366013124312	RE: [OUTSIDE EMAIL] Re: Princess - Akamai Sync on Scrunch POC Order Form	337403271887	2026-04-23
+365982500585	Re: Princess - Akamai Sync on Scrunch POC Order Form	337353250508;337353250514	2026-04-23
+365690919615	Princess - Akamai Sync on Scrunch POC Order Form	337022797552	2026-04-22
+365377134279	Princess - Akamai Sync on Scrunch POC Order Form	336316962543	2026-04-20
+365416219375	Princess - Akamai Sync on Scrunch POC Order Form	336319592124	2026-04-20
+365464409789	Princess - Akamai Sync on Scrunch POC Order Form	336339106539	2026-04-20
+365841192674	Re: Basware - Scrunch | AEO / GEO Platform Selection RFP - Pre-Invitation & NDA	337308990167	2026-04-23
+365625596626	Basware - Scrunch | AEO / GEO Platform Selection RFP - Pre-Invitation & NDA	336839625409	2026-04-22
+366032981722	Re: Citi MSA Thread	337381484273	2026-04-23
+366029425355	Re: Citi MSA Thread	337344752365	2026-04-23
+365772553917	Re: Citi MSA Thread	337019422420	2026-04-22
+365460769512	Re: Citi MSA Thread	336327438047	2026-04-20
+364435185373	Re: Scrunch MSA or POC	334468082404	2026-04-14
+364260670173	RE: REVIEW: CG-Scrunch MSA	334177657575	2026-04-13
+364747064033	Re: REVIEW: CG-Scrunch MSA	335084393184	2026-04-16
+362927955650	Re: REVIEW: CG-Scrunch MSA	331964071611	2026-04-06
+361953566399	REVIEW: CG-Scrunch MSA	330324266686	2026-04-01
+364562543319	Signed Documents	334744939221;334744939215;334745137860	2026-04-15
+364600429275	Re: Excelsa Labs, Inc. | Contract Redline Review - Capital Group Agreement	334783503055	2026-04-15
+364301533926	Re: Excelsa Labs, Inc. | Contract Redline Review - Capital Group Agreement	334194059994	2026-04-13
+362172567259	Re: Excelsa Labs, Inc. | Contract Redline Review - Capital Group Agreement	330726648558	2026-04-02
+362003396302	Re: Excelsa Labs, Inc. | Contract Redline Review - Capital Group Agreement	330362540787	2026-04-01
+364317705944	Re: Excelsa Labs, Inc. | Resmed MSA Redline Review - $40k Monitoring Deal	334194129600	2026-04-13
+364205995722	Re: Excelsa Labs, Inc. | Resmed MSA Redline Review - $40k Monitoring Deal	334177268437	2026-04-13
+366285971140	Re: Excelsa Labs, Inc. | Resmed MSA Redline Review - $40k Monitoring Deal	337696158402	2026-04-24
+366707076834	Re: Excelsa Labs, Inc. | Resmed MSA Redline Review - $40k Monitoring Deal	338630088386	2026-04-27
+365737703107	Re: Excelsa Labs, Inc. | Resmed MSA Redline Review - $40k Monitoring Deal	337050144473	2026-04-22
+363543108322	Credit Based Order Form	332687804118	2026-04-08
+361979491027	Evaluation Agreement Amendment	330350623481	2026-04-01
+361072147142	Re: Scrunch/Cat NDA & Workshop Session planning	328700272347	2026-03-27
+358916468431	Scrunch/Cat NDA	324068506343	2026-03-13
+359892264697	Re: Scrunch - Godfrey mNDA	326353728236	2026-03-20
+359223838425	Re: Scrunch - Godfrey mNDA	325037632197	2026-03-16
+358795277038	Re: Scrunch - Godfrey mNDA	323731941098	2026-03-12
+353064145632	Re: Scrunch - Godfrey mNDA	320775572158	2026-03-03
+353095137990	Re: Scrunch - Godfrey mNDA	320749356754	2026-03-03
+353100406463	Re: Scrunch - Godfrey mNDA	320732646093	2026-03-03
+352029871805	Scrunch - Godfrey mNDA	320305288952	2026-03-02
+357822112484	Accepted: Internal - Sync on Princess Order Form, Next Steps, and Carnival	322630626008	2026-03-09
+360352931572	Scrunch Order Form for Crossmedia	327728499437	2026-03-25
+360088617687	Re: Scrunch MSA or POC	327250674396	2026-03-23
+360115261151	Scrunch MSA or POC	327250589432	2026-03-23
+360577813215	RE: Scrunch MSA or POC	327990459129	2026-03-25
+360586628804	Re: Scrunch MSA or POC	327962920639	2026-03-25
+360592138983	Re: Scrunch MSA or POC	327250674396;327250589432	2026-03-25
+360809891543	Re: Scrunch MSA or POC	327250589432	2026-03-26
+361093330674	RE: Scrunch MSA or POC	327990459129;327250589432	2026-03-27
+362016916208	Re: Scrunch MSA or POC	330443971268	2026-04-01
+360717421279	Re: Scrunch | Sony: 3/17 Call Agenda Items?	328236169945	2026-03-26
+360839671521	Re: [EXTERNAL] Scrunch Pilot Order Form	328394844864	2026-03-27
+370145341146	Fwd: [EXTERNAL] Scrunch Pilot Order Form	328394844864	2026-05-18
+349011668707	RE: [EXTERNAL] Open MSA items with Scrunch	319415137983;319415137984	2026-02-27
+348800125650	RE: [EXTERNAL] Open MSA items with Scrunch	319151467198	2026-02-26
+348418112208	RE: [EXTERNAL] Open MSA items with Scrunch	318847344332;318837985996	2026-02-25
+348929517246	Re: [EXTERNAL] Open MSA items with Scrunch	319161628346	2026-02-26
+348935104204	Re: [EXTERNAL] Open MSA items with Scrunch	319161628346	2026-02-26
+348938628845	RE: [EXTERNAL] Open MSA items with Scrunch	319151467198	2026-02-26
+348969813728	Re: REVIEW: CG/Scrunch MSA	319221565117	2026-02-26
+341259412171	Re: Citi MSA Thread	315638471404	2026-02-16
+343741851323	REVIEW: CG/Scrunch MSA	316649094844	2026-02-18
+329818553057	Scrunch MSA & SOW Redlines	311613385464	2026-02-05
+333707761398	Re: Scrunch MSA & SOW Redlines	313124830929;313158272744	2026-02-09
+343369373387	Re: Excelsa Labs, Inc. | Morgan Stanley MSA Review and Redline for Scrunch	316411499257	2026-02-18
+334068414182	Re: Excelsa Labs, Inc. | Morgan Stanley MSA Review and Redline for Scrunch	313121417968	2026-02-09
+335486768859	Re: Scrunch MSA	313648853693	2026-02-10
+327600057029	Scrunch MSA	310218792644	2026-02-04
+333713114863	Re: [EXT] NXP / Scrunch Evaluation Agreement	311047603936;313121475274;311047017168	2026-02-09
+333723816659	Re: [EXT] Re: NXP / Scrunch Evaluation Agreement	313121475274	2026-02-09
+331116509927	Re: NXP / Scrunch Evaluation Agreement	312084462301	2026-02-06
+328256061139	NXP / Scrunch Evaluation Agreement	311047603941	2026-02-04
+307943609059	Re: Publicis MSA	297182873311	2026-01-17
+325556448956	RE: [EXTERNAL]Re: [please review and complete] Scrunch <> Chase Home Lending POC agreement	309169655537	2026-02-02
+318219585257	Re: [EXTERNAL]Re: [please review and complete] Scrunch <> Chase Home Lending POC agreement	304488267476	2026-01-27
+317437716211	RE: [EXTERNAL]Re: [please review and complete] Scrunch <> Chase Home Lending POC agreement	304131830477	2026-01-27
+311268417239	Re: [EXTERNAL]Re: [please review and complete] Scrunch <> Chase Home Lending POC agreement	299056671453	2026-01-20
+325584859847	Re: Excelsa Labs, Inc. | Sony Web Services Evaluation Agreement Extension	309229818611	2026-02-02
+278922426061	Re: Excelsa Labs, Inc. | Sony Web Services Evaluation Agreement Extension	274446885570	2025-12-11
+318345325270	Re: Excelsa Labs, Inc. | JPMC Evaluation Agreement Review - 6 Month Pilot	304487325408	2026-01-27
+317781680831	Re: Excelsa Labs, Inc. | JPMC Evaluation Agreement Review - 6 Month Pilot	304133148379	2026-01-27
+310971437765	Re: Excelsa Labs, Inc. | JPMC Evaluation Agreement Review - 6 Month Pilot	298953956058	2026-01-20
+307991084787	Re: Excelsa Labs, Inc. | JPMC Evaluation Agreement Review - 6 Month Pilot	297228056254	2026-01-17
+319034494695	RE: AW: AW: AW: Order form is with procurment	305519704795;305616792296	2026-01-28
+316579718870	AW: AW: AW: Order form is with procurment	303057031910;303057031909	2026-01-26
+297440975598	AW: AW: Order form is with procurment	290446196459;290446196460	2026-01-07
+296937322211	RE: AW: Order form is with procurment	289955724996	2026-01-06
+306149104349	AW: AW: Order form is with procurment	290922038988;290899746537;289955724996	2026-01-16
+297990675193	AW: AW: Order form is with procurment	290922038988;290899746537	2026-01-08
+292548228814	Re: Order form is with procurment	286744269550;286744269549	2025-12-31
+291802289907	AW: Order form is with procurment	286123310801;286111327982;286111327978;286111327977	2025-12-30
+297797295810	Re: Scrunch order form for execution	290752632541;290752699083;290752632540	2026-01-07
+297987053273	RE: Scrunch order form for execution	290071491267	2026-01-08
+282006173386	Scrunch Order Form	276545276623;276545276622	2025-12-15
+278217722586	Sony Entertainment - Order Form help needed	273764797161	2025-12-10
+320151862004	Scrunch/PepsiCo NDA	306404425453	2026-01-29
+267672889073	Re: Excelsa Labs, Inc. | AK Bank NDA Review and Redlines	265492443847	2025-11-25
+265842963185	Re: Excelsa Labs | MSA Template Revision	264347891421	2025-11-24
+263732429519	Re: Excelsa Labs, Inc. | PacSun MSA Redline Review	262650305211	2025-11-20
+285641928386	Re: BarkleyOKRP SOW & MSA Redlines	279215831757	2025-12-19
+277239267008	Re: Amazon MSA	272891628236	2025-12-09
+272265324278	Re: Sample scope of work / engagement agreement	268878032632	2025-12-02
+298401781449	Scrunch - Evaluation Agreement	291399844584	2026-01-08
+329962963649	Re: Scrunch | Sony: Finalized Agenda for Tomorrow	311643004635	2026-02-05
+333684749041	Scrunch | Dell Tentative Onsite Agenda	312960186090	2026-02-09
