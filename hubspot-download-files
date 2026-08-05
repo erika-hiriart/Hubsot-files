@@ -1,0 +1,197 @@
+// hubspot-download-files.js
+//
+// Downloads the actual file content for every PDF/DOC/DOCX attachment found so far:
+//   1) The Notes-based results already in hubspot-all-attachments.csv (metadata already resolved)
+//   2) The email candidate list in email-order-form-candidates.txt (metadata NOT yet resolved --
+//      this script resolves it here, then filters to pdf/doc/docx before downloading)
+//
+// HOW DOWNLOADING WORKS: HubSpot files are private, so you can't just GET the file's normal URL.
+// You first request a "signed URL" (a temporary authenticated download link, valid a few hours),
+// then download from THAT url. Two API calls per file: one for the signed URL, one to fetch bytes.
+//
+// USAGE:
+//   HUBSPOT_TOKEN=pat-xxxxxxxx node hubspot-download-files.js
+//
+// REQUIRED FILES IN THE SAME FOLDER (both optional -- script skips whichever is missing):
+//   hubspot-all-attachments.csv          (from the earlier Notes run)
+//   email-order-form-candidates.txt      (the email candidate list)
+//
+// REQUIRED SCOPES: files.read, files.ui_hidden.read (you already have both)
+//
+// OUTPUT: a "downloads/" folder containing every matched file, named
+//   "<engagementType>_<fileId>_<original name>.<extension>"
+// to avoid collisions, plus a manifest.csv logging what was downloaded vs skipped/failed.
+
+const fs = require('fs');
+const path = require('path');
+
+const TOKEN = process.env.HUBSPOT_TOKEN;
+if (!TOKEN) {
+  console.error('Set HUBSPOT_TOKEN env var to a HubSpot Private App access token.');
+  process.exit(1);
+}
+
+const BASE = 'https://api.hubapi.com';
+const HEADERS = { Authorization: `Bearer ${TOKEN}` };
+const TARGET_EXTENSIONS = new Set(['pdf', 'doc', 'docx']);
+const DOWNLOAD_DIR = path.join(__dirname, 'downloads');
+const CONCURRENCY = 4; // gentle on rate limits since each file = 2 API calls
+
+async function hsFetch(url, isFullUrl = false) {
+  const res = await fetch(isFullUrl ? url : `${BASE}${url}`, { headers: HEADERS });
+  if (!res.ok) {
+    const body = await res.text();
+    throw new Error(`GET ${url} failed: ${res.status} ${body}`);
+  }
+  return res;
+}
+
+function sanitizeFilename(name) {
+  return name.replace(/[/\\?%*:|"<>]/g, '-').slice(0, 150);
+}
+
+async function mapWithConcurrency(items, limit, fn) {
+  const results = new Array(items.length);
+  let idx = 0;
+  async function worker() {
+    while (idx < items.length) {
+      const current = idx++;
+      results[current] = await fn(items[current]);
+    }
+  }
+  await Promise.all(Array.from({ length: limit }, worker));
+  return results;
+}
+
+// --- Load fileIds from the Notes CSV (metadata already known) ---
+function loadFromNotesCsv() {
+  const csvPath = path.join(__dirname, 'hubspot-all-attachments.csv');
+  if (!fs.existsSync(csvPath)) {
+    console.log('hubspot-all-attachments.csv not found, skipping that source.');
+    return [];
+  }
+  const lines = fs.readFileSync(csvPath, 'utf8').split('\n').filter(Boolean);
+  const header = lines[0].split(',');
+  const idIdx = header.indexOf('fileId');
+  const nameIdx = header.indexOf('name');
+  const extIdx = header.indexOf('extension');
+  const typeIdx = header.indexOf('engagementType');
+  const items = [];
+  for (let i = 1; i < lines.length; i++) {
+    // naive CSV split -- fine here since names rarely contain commas after prior quoting;
+    // if you see garbled rows, swap in a proper CSV parser (e.g. papaparse)
+    const cols = lines[i].split(',');
+    if (cols.length < header.length) continue;
+    items.push({
+      fileId: cols[idIdx],
+      name: cols[nameIdx],
+      extension: (cols[extIdx] || '').toLowerCase(),
+      engagementType: cols[typeIdx] || 'notes',
+      needsMetadata: false,
+    });
+  }
+  return items;
+}
+
+// --- Load fileIds from the email candidate list (metadata NOT known yet) ---
+function loadFromEmailCandidates() {
+  const txtPath = path.join(__dirname, 'email-order-form-candidates.txt');
+  if (!fs.existsSync(txtPath)) {
+    console.log('email-order-form-candidates.txt not found, skipping that source.');
+    return [];
+  }
+  const lines = fs.readFileSync(txtPath, 'utf8').split('\n');
+  const items = [];
+  for (const line of lines) {
+    const parts = line.split('\t');
+    if (parts.length !== 4) continue;
+    const [emailId, , attachIds] = parts;
+    if (!/^\d+$/.test(emailId.trim())) continue;
+    for (const fid of attachIds.split(';')) {
+      const trimmed = fid.trim();
+      if (trimmed) items.push({ fileId: trimmed, engagementType: 'emails', needsMetadata: true });
+    }
+  }
+  return items;
+}
+
+// --- Resolve metadata for items that don't have it yet ---
+async function resolveMetadata(item) {
+  try {
+    const res = await hsFetch(`/files/v3/files/${item.fileId}`);
+    const data = await res.json();
+    return { ...item, name: data.name, extension: (data.extension || '').toLowerCase() };
+  } catch (e) {
+    console.warn(`  metadata lookup failed for ${item.fileId}: ${e.message}`);
+    return { ...item, name: null, extension: null, error: e.message };
+  }
+}
+
+// --- Get signed URL, then download the actual bytes ---
+async function downloadFile(item) {
+  try {
+    const signedRes = await hsFetch(`/files/v3/files/${item.fileId}/signed-url`);
+    const signed = await signedRes.json();
+    const fileRes = await hsFetch(signed.url, true);
+    const buffer = Buffer.from(await fileRes.arrayBuffer());
+    const safeName = sanitizeFilename(item.name || item.fileId);
+    const filename = `${item.engagementType}_${item.fileId}_${safeName}`;
+    fs.writeFileSync(path.join(DOWNLOAD_DIR, filename), buffer);
+    return { ...item, filename, status: 'downloaded', bytes: buffer.length };
+  } catch (e) {
+    return { ...item, status: 'failed', error: e.message };
+  }
+}
+
+async function main() {
+  if (!fs.existsSync(DOWNLOAD_DIR)) fs.mkdirSync(DOWNLOAD_DIR);
+
+  const notesItems = loadFromNotesCsv();
+  const emailItems = loadFromEmailCandidates();
+  console.log(`Loaded ${notesItems.length} items from Notes CSV, ${emailItems.length} from email candidates.`);
+
+  console.log('Resolving metadata for items that need it...');
+  const emailResolved = await mapWithConcurrency(emailItems, CONCURRENCY, resolveMetadata);
+
+  const allItems = [...notesItems, ...emailResolved];
+
+  // De-dupe by fileId (same attachment can show up via multiple emails/notes)
+  const seen = new Set();
+  const deduped = allItems.filter((i) => {
+    if (seen.has(i.fileId)) return false;
+    seen.add(i.fileId);
+    return true;
+  });
+
+  const matched = deduped.filter((i) => TARGET_EXTENSIONS.has(i.extension));
+  console.log(`${matched.length} unique PDF/DOC/DOCX files to download (out of ${deduped.length} unique items checked).`);
+
+  const results = await mapWithConcurrency(matched, CONCURRENCY, downloadFile);
+
+  const downloaded = results.filter((r) => r.status === 'downloaded');
+  const failed = results.filter((r) => r.status === 'failed');
+  console.log(`Downloaded ${downloaded.length} files. ${failed.length} failed.`);
+
+  const manifestHeader = 'fileId,name,extension,engagementType,status,filename,bytes,error\n';
+  const manifestRows = results
+    .map((r) =>
+      [
+        r.fileId,
+        `"${(r.name || '').replace(/"/g, '""')}"`,
+        r.extension || '',
+        r.engagementType,
+        r.status,
+        r.filename || '',
+        r.bytes || '',
+        `"${(r.error || '').replace(/"/g, '""')}"`,
+      ].join(',')
+    )
+    .join('\n');
+  fs.writeFileSync(path.join(__dirname, 'download-manifest.csv'), manifestHeader + manifestRows);
+  console.log('Wrote download-manifest.csv');
+}
+
+main().catch((err) => {
+  console.error(err);
+  process.exit(1);
+});
