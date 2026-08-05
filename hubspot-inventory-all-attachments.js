@@ -90,6 +90,9 @@ async function getEngagementsWithAttachments(engagementType) {
       limit: 100,
       ...(after ? { after } : {}),
     };
+    if (engagementType === 'emails') {
+      console.log('DEBUG EMAIL REQUEST BODY:', JSON.stringify(body));
+    }
     const page = await hsFetch(`/crm/v3/objects/${engagementType}/search`, {
       method: 'POST',
       body: JSON.stringify(body),
