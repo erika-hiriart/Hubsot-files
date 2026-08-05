@@ -1,0 +1,35 @@
+name: HubSpot Download Files
+
+on:
+  workflow_dispatch: {}
+
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repo
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run download script
+        env:
+          HUBSPOT_TOKEN: ${{ secrets.HUBSPOT_TOKEN }}
+        run: node hubspot-download-files.js
+
+      - name: Upload downloaded files as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: hubspot-downloaded-files
+          path: downloads/
+          retention-days: 30
+
+      - name: Upload manifest as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: download-manifest-csv
+          path: download-manifest.csv
+          retention-days: 30
